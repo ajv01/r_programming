@@ -1,0 +1,53 @@
+---
+title: "Matrix from scratch"
+author: "Josue Vargas"
+date: "2/21/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Create a vector.
+```{r sales_vec}
+sales_vec <- c(1000, 1300, 1300, 1100, 1400, 800, 1200, 1500, 1850, 2330, 860, 1300, 1400, 1600, 1970, 570, 380, 450, 465, 580, 155, 190, 210, 250, 300)
+```
+
+## Create a matrix from a vector.
+```{r vec_to_mtr}
+sales_mtr <- matrix(sales_vec, nrow = 5, byrow = TRUE)
+```
+
+## Add column and row names to the matrix
+```{r add_colnames}
+colnames(sales_mtr) <- c(1990, 1991, 1992, 1993, 1994)
+```
+
+```{r add_rownames}
+rownames(sales_mtr) <- c("Commercial Satellites Delivered",
+                         "Satellite Services",
+                         "Satellite Ground Equipment",
+                         "Commercial Launches",
+                         "Remote Sensing Data")
+```
+
+Why does the following code produce an error:
+`sales_tbl <- rownames_to_column(sales_mtr, var="Industry")`?
+
+The simple answer is `rownames_to_columns()` is a function that only works with data frames. A conceptual answer is
+that you are trying to add a `chr` column to a `numerical` matrix. By definition, a matrix can only consist of one data type. In this case: numbers. To use `rownames_to_columns` the matrix must first be converted to a data frame to allow for columns of different data types.
+
+## Convert matrix to a data frame
+```{r matrix_to_tibble}
+sales_df <- data.frame(sales_mtr, check.names = FALSE)
+sales_df <- rownames_to_column(sales_df, var="Industry")
+# cannot convert matrix directly to tibble because as_tibble will drop the row names.
+sales_tib <- as_tibble(sales_df)
+```
+
+## Save data frame to a csv file
+```{r saving_data}
+write_csv(x = sales_tib, file = "~/Dropbox/programming/R/r_programming/01_data_files/space_industry.csv", col_names = TRUE)
+```
