@@ -1,0 +1,38 @@
+---
+title: "Pivot longer"
+author: "Josue Vargas"
+date: "2/22/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r load_datasets}
+industry <- read_csv("../01_data_files/space_industry.csv", col_names = TRUE)
+vaccination <- read_csv("../01_data_files/vaccination_willingness.csv", col_names = TRUE)
+u5mr <- read_csv("../01_data_files/unicef-u5mr.csv", col_names = TRUE)
+```
+
+
+```{r first_dataset}
+industry %>% pivot_longer(cols = !Industry, names_to = "Year", values_to = "Sales") %>% 
+    view()
+```
+
+```{r second_dataset}
+vaccination %>% rename(country = X.1,
+                       august = `Total Agree - August 2020`,
+                       october = `Total Agree - October 2020`) %>% 
+    pivot_longer(cols = 2:3, names_to = "month", values_to = "percentages") %>% 
+    view()
+```
+
+```{r third_dataset}
+u5mr %>% pivot_longer(cols = starts_with("U5MR"), names_to = "year", values_to = "u5mr") %>% 
+    mutate(year = as.numeric(gsub("U5MR.", "", year))) %>% 
+    view()
+```
+
